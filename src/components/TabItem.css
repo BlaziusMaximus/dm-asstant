@@ -1,0 +1,44 @@
+p {
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    align-items: center;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: center;
+    margin-bottom: -1px;
+    padding: .5em 1em;
+    vertical-align: top;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+p:hover {
+    background-color: #f5f5f5;
+    border-bottom-color: #dbdbdb;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: #363636;
+}
+
+.is-active p {
+    color: #3273dc;
+    background-color: #fff;
+    border-color: #dbdbdb;
+    border-bottom-color: transparent!important;
+}
+
+.displayTab {
+    align-items: center;
+}
+
+.displayTab .icon {
+    margin: 0 !important;
+}
+
+.icons {
+    margin-left: .5em;
+}
+
+.icons .icon {
+    margin: 0 .25em !important;
+}

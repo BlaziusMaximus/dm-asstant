@@ -1,0 +1,12 @@
+.commandField {
+    display: flex;
+}
+
+.commInp {
+    width: 100%;
+    margin: 1em;
+}
+
+.commBtn {
+    margin: 1em;
+}
