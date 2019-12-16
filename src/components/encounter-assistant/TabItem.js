@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import $ from '../../node_modules/jquery'
+import $ from 'jquery'
 import './TabItem.css'
 import PropTypes from 'prop-types'
 
