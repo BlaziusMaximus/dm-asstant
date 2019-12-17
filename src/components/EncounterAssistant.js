@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import $ from 'jquery'
 import CommandLine from './encounter-assistant/CommandLine'
 import Tabs from './encounter-assistant/Tabs'
 import Battlemap from './encounter-assistant/Battlemap'
@@ -10,34 +11,44 @@ export class EncounterAssistant extends Component {
     tabID = uuid.v4();
     state = {
         tabNames: ["New Group", ""],
+        tabColors: [
+            "lightcoral",
+            "lightblue",
+            "lightgreen",
+            "lightgoldenrodyellow",
+            "lightsalmon",
+            "lightseagreen",
+            "lightslategrey"
+        ],
+        highlightedTabs: [],
         activeTab: 0,
         action: "",
         boardSize: 10,
         squares: [[]],
         selectedSquare: null,
-        stepNum: 0,
-        MAX_SIZE: 500,
+        entities: [{}],
     };
 
     componentDidMount() {
-        console.log(this.props.state)
         if (this.props.state!=null) this.setState(this.props.state);
         let { boardSize } = this.state;
         this.setState({ squares: [Array(boardSize).fill(Array(boardSize).fill(null))] });
     }
 
     addTab = () => {
-        let { squares, boardSize } = this.state;
+        let { squares, boardSize, entities } = this.state;
         squares.push(Array(boardSize).fill(Array(boardSize).fill(null)));
-        this.setState({ tabNames: this.state.tabNames.concat([""]), squares });
+        entities.push({});
+        this.setState({ tabNames: this.state.tabNames.concat([""]), squares, entities });
         this.props.updateState(this.state);
     }
 
     delTab = (index) => {
-        let { tabNames, squares } = this.state;
+        let { tabNames, squares, entities } = this.state;
         tabNames.splice(index, 1);
         squares.splice(index, 1);
-        this.setState({ tabNames, squares });
+        entities.splice(index, 1);
+        this.setState({ tabNames, squares, entities });
         this.props.updateState(this.state);
     }
 
@@ -53,13 +64,54 @@ export class EncounterAssistant extends Component {
         this.props.updateState(this.state);
     }
 
+    getGhostEnts = () => {
+        let { activeTab, entities } = this.state;
+        let ghostEnts = [];
+        entities.forEach((tab, i) => {
+            if (i !== activeTab) {
+                ghostEnts.push(tab);
+            } else {
+                ghostEnts.push({});
+            }
+        });
+        return ghostEnts;
+    }
+
+    highlightTabs = (tabs) => {
+        this.setState({ highlightedTabs: tabs });
+    }
+
+    unHighlightTabs = () => {
+        this.setState({ highlightedTabs: [] });
+    }
+
+    handleSquareDrop = (x, y, evt) => {
+        evt.preventDefault();
+
+        let { entities, activeTab } = this.state;
+        let ent = evt.dataTransfer.getData('Text');
+        if (!$(evt.currentTarget).hasClass("is-occupied")) {
+            entities[activeTab][ent] = $.extend(entities[activeTab][ent], {
+                x: parseInt(x),
+                y: parseInt(y),
+            });
+            this.setState({ entities })
+        }
+    }
+
+    runCommand = (ent, command) => {
+        let { activeTab, entities } = this.state;
+        entities[activeTab][ent] = command(entities, activeTab);
+        this.setState({ entities });
+    }
+
     render() {
-        const { tabNames, activeTab, boardSize, squares, selectedSquare } = this.state;
+        const { tabNames, activeTab, boardSize, squares, selectedSquare, entities } = this.state;
         
         return (
         <div className="encounterAssistant">
             <CommandLine
-                runCommand={(c) => {console.log(c)}}
+                runCommand={this.runCommand}
             />
             <Tabs
                 tabID={this.tabID}
@@ -67,6 +119,8 @@ export class EncounterAssistant extends Component {
                 delTab={this.delTab}
                 activateTab={this.activateTab}
                 setTabName={this.setTabName}
+                tabColors={this.state.tabColors}
+                highlightedTabs={this.state.highlightedTabs}
             />
             <div className="columns" style={{width: "100%", margin:0}}>
                 <div className="column is-4" style={{padding:0,textAlign:"center"}}>
@@ -75,6 +129,12 @@ export class EncounterAssistant extends Component {
                     squares={tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
                     squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
                     selectedSquare={selectedSquare}
+                    tabColors={this.state.tabColors}
+                    localEnts={entities[activeTab]}
+                    ghostEnts={this.getGhostEnts()}
+                    highlightTabs={this.highlightTabs}
+                    unHighlightTabs={this.unHighlightTabs}
+                    handleDrop={this.handleSquareDrop}
                 />
                 </div>
                 <div className="column is-4" style={{backgroundColor: "black"}}>

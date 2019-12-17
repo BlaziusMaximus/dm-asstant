@@ -76,12 +76,14 @@ export class Tabs extends Component {
         return (
         <div className="tabs is-boxed" style={{marginBottom: "1em"}}>
         <ul>
-            {this.state.tabs.map(tab => 
+            {this.state.tabs.map((tab, tabkey) => 
                 <TabItem
                     id={tab.id}
                     name={tab.name}
                     inputTab={tab.input}
                     activeTab={tab.id === this.state.activeTab}
+                    tabColor={this.props.tabColors[tabkey]}
+                    highlighted={this.props.highlightedTabs.filter(x => x===tabkey).length!==0}
                     activateTab={this.activateTab}
                     setName={this.setTabName}
                     editName={this.editTabName}
@@ -101,6 +103,7 @@ Tabs.propTypes = {
     delTab: PropTypes.func.isRequired,
     activateTab: PropTypes.func.isRequired,
     setTabName: PropTypes.func.isRequired,
+    highlightedTabs: PropTypes.array.isRequired,
 };
 
 export default Tabs

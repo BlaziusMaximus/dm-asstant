@@ -117,7 +117,7 @@ export class TabItem extends Component {
             id={id}
             className={"group displayTab ".concat(activeTab?"is-active":"")}
             onClick={this.activateTab}>
-            <p>
+            <p style={{backgroundColor: this.props.highlighted?this.props.tabColor:""}}>
                 <span>{name}</span>
                 {activeTab ?
                 <span className="icons">

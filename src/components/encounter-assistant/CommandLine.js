@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import RunCommand from './RunCommand'
 import './CommandLine.css'
 import PropTypes from 'prop-types'
 
@@ -13,8 +14,14 @@ export class CommandLine extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.props.runCommand(this.state.command);
-        this.setState({ command: "" });
+
+        let { command } = this.state;
+        command = command.toLowerCase();
+        // tokenize command
+        let tokens = command.split(' ').filter(el => el !== ' ' && el !== '');
+
+        this.props.runCommand(tokens[1], RunCommand(tokens));
+        this.setState({ command: '' });
     }
 
     render() {
