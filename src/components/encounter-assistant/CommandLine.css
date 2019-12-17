@@ -1,3 +1,7 @@
+.commandLine .column {
+    padding: 0 1em;
+}
+
 .commandField {
     display: flex;
 }

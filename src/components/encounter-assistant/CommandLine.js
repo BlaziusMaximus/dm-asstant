@@ -19,7 +19,7 @@ export class CommandLine extends Component {
 
     render() {
         return (
-        <div className="columns commandLine" style={{width: "100%"}}>
+        <div className="columns is-centered commandLine" style={{width: "100%",backgroundColor:"whitesmoke"}}>
         <div className="column is-half">
         <form onSubmit={this.onSubmit}>
         <div className="field commandField">

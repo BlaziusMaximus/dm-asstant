@@ -10,6 +10,8 @@ class App extends React.Component {
         super(props);
 
         this.state = {
+            width: 0,
+            height: 0,
             homePageName: "Home",
             navPages: [{
                 id: uuid.v4(),
@@ -20,6 +22,7 @@ class App extends React.Component {
                 name: "test",
                 component: "encounter-assistant",
             }],
+            pageStates: [{},{}],
             colorThemes: [{
                 base: "#d82b2b",
                 darkShade: "#b22323",
@@ -30,6 +33,22 @@ class App extends React.Component {
             }],
             currentColorTheme: 0,
         };
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    }
+
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+    }
+
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    }
+
+    updatePage = (page, state) => {
+        let { pageStates } = this.state;
+        pageStates[page] = state;
+        this.setState({ pageStates });
     }
 
     render() {
@@ -43,7 +62,14 @@ class App extends React.Component {
                             colorTheme={this.state.colorThemes[this.state.currentColorTheme]}
                         />
                     )} />
-                    <Route path="/encounter-assistant" component={EncounterAssistant} />
+                    <Route path="/encounter-assistant" render={props => (
+                        <EncounterAssistant
+                            width={this.state.width}
+                            height={this.state.height}
+                            state={this.state.pageStates[0]}
+                            updateState={(state) => this.updatePage(0, state)}
+                        />
+                    )} />
                 </div>
             </Router>
         );

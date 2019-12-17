@@ -36,7 +36,7 @@ export class Tabs extends Component {
             return tab;
         });
         let newTabI = tabs.findIndex(x => x.id === tab && x.name === "");
-        if (newTabI && tabs[newTabI]) tabs[newTabI].input = true;
+        if (newTabI!=null && tabs[newTabI]!=null) tabs[newTabI].input = true;
         this.setState({ activeTab: tab, tabs });
         this.props.activateTab(tabs.findIndex(x => x.id === tab));
     }
@@ -69,11 +69,12 @@ export class Tabs extends Component {
             tabs.splice(tabI, 1);
         }
         this.setState({ tabs });
+        this.props.delTab(tabI);
     }
 
     render() {
         return (
-        <div className="tabs is-boxed">
+        <div className="tabs is-boxed" style={{marginBottom: "1em"}}>
         <ul>
             {this.state.tabs.map(tab => 
                 <TabItem
@@ -97,6 +98,7 @@ export class Tabs extends Component {
 Tabs.propTypes = {
     tabID: PropTypes.string.isRequired,
     addTab: PropTypes.func.isRequired,
+    delTab: PropTypes.func.isRequired,
     activateTab: PropTypes.func.isRequired,
     setTabName: PropTypes.func.isRequired,
 };

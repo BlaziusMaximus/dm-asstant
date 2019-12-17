@@ -1,0 +1,28 @@
+.battlemap {
+    background-color: antiquewhite;
+    border-collapse: collapse;
+    outline: none;
+    /* padding: .15em; */
+    /* margin: 0 .75em; */
+}
+
+td {
+    background-color: burlywood;
+    margin: .5em;
+    border: solid antiquewhite;
+    box-sizing: border-box;
+}
+td:hover {
+    background-color: bisque;
+}
+
+td.active {
+    cursor: pointer;
+    background-color: saddlebrown;
+}
+td.active:hover {
+    background-color: rgb(122, 58, 13);
+}
+td.active:active {
+    background-color: rgb(95, 44, 8);
+}
