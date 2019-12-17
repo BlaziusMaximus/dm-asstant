@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import CommandLine from './encounter-assistant/CommandLine'
 import Tabs from './encounter-assistant/Tabs'
 import uuid from 'uuid'
+import './EncounterAssistant.css'
 
 export class EncounterAssistant extends Component {
     tabID = uuid.v4();
