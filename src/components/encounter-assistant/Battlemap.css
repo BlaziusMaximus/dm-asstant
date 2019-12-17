@@ -30,5 +30,5 @@ td.is-local-ent .cell:active {
 }
 
 td.is-ghost-ent {
-    background-color: blue;
+    cursor: pointer;
 }

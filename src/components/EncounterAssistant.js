@@ -117,6 +117,7 @@ export class EncounterAssistant extends Component {
                 tabID={this.tabID}
                 addTab={this.addTab}
                 delTab={this.delTab}
+                activeTab={this.state.activeTab}
                 activateTab={this.activateTab}
                 setTabName={this.setTabName}
                 tabColors={this.state.tabColors}
@@ -134,6 +135,7 @@ export class EncounterAssistant extends Component {
                     ghostEnts={this.getGhostEnts()}
                     highlightTabs={this.highlightTabs}
                     unHighlightTabs={this.unHighlightTabs}
+                    activateTab={(localSq, ghostSqs) => localSq?null:(ghostSqs.length!==0?this.activateTab(ghostSqs[0]):null)}
                     handleDrop={this.handleSquareDrop}
                 />
                 </div>

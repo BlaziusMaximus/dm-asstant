@@ -14,7 +14,6 @@ export class Tabs extends Component {
             name: "",
             input: false,
         }],
-        activeTab: this.props.tabID,
     };
 
     addTab = () => {
@@ -29,7 +28,8 @@ export class Tabs extends Component {
     }
 
     activateTab = (tab) => {
-        let { tabs, activeTab } = this.state;
+        let { tabs } = this.state;
+        let { activeTab } = this.props;
         if (activeTab === tab) return;
         tabs = tabs.map(tab => {
             tab.input = false;
@@ -37,7 +37,7 @@ export class Tabs extends Component {
         });
         let newTabI = tabs.findIndex(x => x.id === tab && x.name === "");
         if (newTabI!=null && tabs[newTabI]!=null) tabs[newTabI].input = true;
-        this.setState({ activeTab: tab, tabs });
+        this.setState({ tabs });
         this.props.activateTab(tabs.findIndex(x => x.id === tab));
     }
 
@@ -81,7 +81,7 @@ export class Tabs extends Component {
                     id={tab.id}
                     name={tab.name}
                     inputTab={tab.input}
-                    activeTab={tab.id === this.state.activeTab}
+                    activeTab={tabkey === this.props.activeTab}
                     tabColor={this.props.tabColors[tabkey]}
                     highlighted={this.props.highlightedTabs.filter(x => x===tabkey).length!==0}
                     activateTab={this.activateTab}

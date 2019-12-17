@@ -26,7 +26,7 @@ export class Battlemap extends Component {
                 if (localSq) ghostSqs = [];
                 return (
                 <td
-                    className={"battlemapSquare ".concat(localSq?"is-local-ent":"")}
+                    className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":""))}
                     key={sqkey}
                     style={{
                         width: squareSize,
@@ -36,7 +36,7 @@ export class Battlemap extends Component {
                     }}
                     onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):null}
                     onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():null}
-                    onClick={() => {}}
+                    onClick={() => {this.props.unHighlightTabs(); this.props.activateTab(localSq, ghostSqs)}}
                     onDragEnter={(e) => e.preventDefault()}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => this.props.handleDrop(sqkey, boardSize-rowkey-1, e)}>
