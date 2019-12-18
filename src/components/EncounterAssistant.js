@@ -91,7 +91,6 @@ export class EncounterAssistant extends Component {
         evt.preventDefault();
         let { entities, activeTab } = this.state;
         let ent = evt.dataTransfer.getData('Text');
-        console.log(evt.currentTarget)
         if (!$(evt.currentTarget).hasClass("is-local-ent") && entities[activeTab][ent] != null) {
             entities[activeTab][ent] = $.extend(entities[activeTab][ent], {
                 x: parseInt(x),
@@ -103,7 +102,8 @@ export class EncounterAssistant extends Component {
 
     runCommand = (ent, command) => {
         let { activeTab, entities } = this.state;
-        entities[activeTab][ent] = command(entities, activeTab);
+        let newEnt = command(entities, activeTab);
+        if (newEnt!==null) entities[activeTab][ent] = newEnt;
         this.setState({ entities });
     }
 
@@ -133,6 +133,7 @@ export class EncounterAssistant extends Component {
                     boardSize={boardSize}
                     squares={activeTab!=null&&tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
                     squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
+                    selectedSquare={selectedSquare}
                     selectSquare={(square) => this.setState({ selectedSquare: square })}
                     tabColors={tabColors}
                     localEnts={entities[activeTab]?entities[activeTab]:{}}
@@ -144,6 +145,8 @@ export class EncounterAssistant extends Component {
                             this.unHighlightTabs();
                             this.activateTab(ghostSqs[0]);
                             this.setState({ selectedSquare: ghostSqEnts[0] });
+                        } else if (!localSq) {
+                            this.setState({ selectedSquare: null });
                         }
                     }}
                     handleDrop={this.handleSquareDrop}
@@ -153,9 +156,10 @@ export class EncounterAssistant extends Component {
                 <Listview
                 />
                 </div>
-                <div className="column is-4" style={{backgroundColor: "red"}}>
+                <div className="column is-4 cardCol">
                 {cardEnt !== null ?
                 <Cardview
+                    maxHeight={(this.props.width*(4/12)-boardSize)*.95}
                     headerColor={tabColors[activeTab]}
                     title={tabNames[activeTab]}
                     name={selectedSquare}
@@ -164,7 +168,12 @@ export class EncounterAssistant extends Component {
                     y={cardEnt ? cardEnt.y : null}
                     effects={cardEnt ? cardEnt.effects : null}
                 />
-                :null}
+                :
+                <div className="blankCard">
+                    <h1 className="title is-3">No entity selected</h1>
+                    <h2 className="subtitle is-5">Selected an entity on the Battlemap to display a card here</h2>
+                </div>
+                }
                 </div>
             </div>
             :null}

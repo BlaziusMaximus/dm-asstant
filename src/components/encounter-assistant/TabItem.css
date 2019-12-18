@@ -1,9 +1,12 @@
+li {
+    height: 2.5em;
+}
+
 p {
     border: 1px solid transparent;
     border-radius: 4px 4px 0 0;
     align-items: center;
     color: #4a4a4a;
-    display: flex;
     justify-content: center;
     margin-bottom: -1px;
     padding: .5em 1em;

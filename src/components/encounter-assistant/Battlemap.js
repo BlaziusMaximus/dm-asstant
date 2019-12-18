@@ -6,7 +6,7 @@ export class Battlemap extends Component {
     
 
     renderRow = (row, rowkey) => {
-        const { boardSize, squareSize, localEnts, ghostEnts, tabColors } = this.props;
+        const { boardSize, squareSize, selectedSquare, localEnts, ghostEnts, tabColors } = this.props;
         return (
         <tr className="battlemapRow" key={rowkey}>
             {row.map((square, sqkey) => {
@@ -34,7 +34,7 @@ export class Battlemap extends Component {
                 });
                 // global entity nationality
                 let ghostColor = ghostSqs.length!==0?ghostSqs.length===1?tabColors[ghostSqs[0]%tabColors.length]:"":"";
-                
+                console.log(localSq===selectedSquare)
                 return (
                 <td
                     className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":""))}
@@ -43,6 +43,7 @@ export class Battlemap extends Component {
                         width: squareSize,
                         height: squareSize,
                         background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:ghostColor,
+                        borderRadius: "8px",
                     }}
                     onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):null}
                     onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():null}
@@ -54,6 +55,10 @@ export class Battlemap extends Component {
                         <div
                             className="cell"
                             draggable="true"
+                            style={{
+                                border: localSq===selectedSquare?"4px solid #eace17":"",
+                                borderRadius: "2px",
+                            }}
                             onDragStart={(evt) => {
                                 let dt = evt.dataTransfer;
                                 dt.setData('Text', localSq);

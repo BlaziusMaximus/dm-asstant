@@ -3,44 +3,70 @@ import PropTypes from 'prop-types'
 import './Cardview.css'
 
 export class Cardview extends Component {
+    changeHealth = (e) => {
+
+    }
+
     render() {
-        const { title, name, health, x, y, effects } = this.props;
+        const { maxHeight, title, name, health, x, y, effects } = this.props;
 
         return (
-        <div className="card">
+        <div className="card" style={{height: `${maxHeight}px`, maxHeight: `${maxHeight}px`}}>
             <header className="card-header" style={{backgroundColor:this.props.headerColor}}>
                 <p className="card-header-title" style={{backgroundColor:this.props.headerColor,cursor:"default"}}>{title}</p>
             </header>
             <div className="card-content">
                 <div className="content">
                     <h1>Name: {name}</h1>
-                    <div className="field">
-                        <label className="label">Health</label>
-                        <div className="control healthInput">
-                            <input className="input" type="text" placeholder="health..." value={health} />
+                    <div className="field is-horizontal">
+                        <div className="field-label is-normal">
+                            <label className="label">Health</label>
+                        </div>
+                        <div className="field-body">
+                            <div className="field">
+                                <div className="control is-expanded healthInput">
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="health..."
+                                        value={health}
+                                        onChange={this.changeHealth}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <label className="label">Position</label>
                     <div className="field is-horizontal">
-                        <div className="field-label is-normal">
+                        <div className="field-label is-normal xLabel">
                             <label className="label">X</label>
                         </div>
                         <div className="field-body">
                             <div className="field">
                                 <div className="control is-expanded xInput">
-                                    <input className="input" type="text" placeholder="x..." value={x} />
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="x..."
+                                        value={x}
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="field is-horizontal">
-                        <div className="field-label is-normal">
+                        <div className="field-label is-normal yLabel">
                             <label className="label">Y</label>
                         </div>
                         <div className="field-body">
                             <div className="field">
                                 <div className="control is-expanded yInput">
-                                    <input className="input" type="text" placeholder="y..." value={y} />
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="y..."
+                                        value={y}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -56,7 +82,12 @@ export class Cardview extends Component {
                                         <i className="fas fa-dice-d20" aria-hidden="true"></i>
                                     </span>
                                     <div className="control">
-                                        <input className="input" type="text" placeholder="effect..." value={ef} />
+                                        <input
+                                            className="input"
+                                            type="text"
+                                            placeholder="effect..."
+                                            value={ef}
+                                        />
                                     </div>
                                 </a>
                                 );
@@ -67,7 +98,11 @@ export class Cardview extends Component {
                                     <i className="fas fa-dice-d20" aria-hidden="true"></i>
                                 </span>
                                 <div className="control">
-                                    <input className="input" type="text" placeholder="effect..." />
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="effect..."
+                                    />
                                 </div>
                             </a>
                         </nav>

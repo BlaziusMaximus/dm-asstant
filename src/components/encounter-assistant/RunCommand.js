@@ -22,8 +22,42 @@ function RunCommand(tokens) {
         });
         break;
     case "effect":
+        func = ((ents, tab) => {
+            let [ ent, effect ] = tokens.slice(1, 3);
+            if (ents[tab]!==null && ents[tab][ent]!==null && effect!==null && effect!==undefined) {
+                let entEffects = ents[tab][ent].effects;
+                if (entEffects.find(ef => ef===effect)) {
+                    return $.extend(ents[tab][ent], {
+                        effects: entEffects.filter(ef => ef!==effect),
+                    });
+                } else {
+                    return $.extend(ents[tab][ent], {
+                        effects: ents[tab][ent].effects.concat([effect]),
+                    });
+                }
+            }
+        });
         break;
     case "health":
+        func = ((ents, tab) => {
+            let [ ent, value ] = tokens.slice(1, 3);
+            console.log(ent, value, parseInt(value))
+            if (isNaN(value)) value = null;
+            if (ents[tab]!==null && ents[tab][ent] && value!==null) {
+                if (value.includes("+") || value.includes("-")) {
+                    return $.extend(ents[tab][ent], {
+                       health: +ents[tab][ent].health + +parseInt(value),
+                    });
+                } else {
+                    return $.extend(ents[tab][ent], {
+                        health: parseInt(value),
+                    });
+                }
+            } else {
+                console.log("Error. Unable to modify entity health.");
+                return ents[tab][ent];
+            }
+        });
         break;
     case "add":
         func = ((ents, tab) => {
@@ -32,7 +66,7 @@ function RunCommand(tokens) {
             let conflict = Object.values(ents[tab]).filter(el => (
                 parseInt(el.x) === parseInt(x) && parseInt(el.y) === parseInt(y)
             )).length !== 0;
-            if (!ents[tab][ent] && health!==null && x!==null && y!==null && !conflict) {
+            if (!ents[tab][ent] && health!==null && x!==null && x!==undefined && y!==null && y!==undefined && !conflict) {
                 return {
                     health,
                     x,
@@ -40,10 +74,13 @@ function RunCommand(tokens) {
                     effects: [],
                     size: 1,
                 };
-            } else {
-                console.log("Error. Unable to add entity.", ents, tab);
+            } else if (ents[tab][ent]) {
+                console.log("Error. Entity with that name already exists.", ents, tab);
                 console.log(!ents[tab][ent], health!==null, x!==null, y!==null, !conflict)
                 return ents[tab][ent];
+            } else {
+                console.log("Error. Unable to add entity.", ents, tab);
+                return null;
             }
         });
         break;
