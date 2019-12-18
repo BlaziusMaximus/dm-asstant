@@ -85,12 +85,22 @@ function RunCommand(tokens) {
         });
         break;
     case "del":
+        func = ((ents, tab) => {
+            let [ ent ] = tokens.slice(1,2);
+            if (ents[tab]!==null && ents[tab][ent]!==null) {
+                return "delete";
+            }
+        });
         break;
     case "poll":
         break;
     case "turn":
         break;
     case "board":
+        func = (() => {
+            let [ boardSize ] = tokens.slice(1,2);
+            return ["board", parseInt(boardSize)];
+        })
         break;
     default:
     }

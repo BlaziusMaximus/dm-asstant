@@ -101,10 +101,17 @@ export class EncounterAssistant extends Component {
     }
 
     runCommand = (ent, command) => {
-        let { entities, activeTab } = this.state;
+        let { entities, activeTab, tabNames } = this.state;
         let newEnt = command(entities, activeTab);
-        if (newEnt!==null) entities[activeTab][ent] = newEnt;
-        this.setState({ entities });
+        if (newEnt==="delete") {
+            delete entities[activeTab][ent];
+            this.setState({ entities });
+        } else if (Array.isArray(newEnt) && newEnt[0]==="board") {
+            this.setState({ boardSize: newEnt[1], entities: Array(tabNames.length+1).fill({}), squares: Array(tabNames.length).fill(Array(newEnt[1]).fill(Array(newEnt[1]).fill(null))), selectedSquare: null });
+        } else if (newEnt!==null) {
+            entities[activeTab][ent] = newEnt;
+            this.setState({ entities });
+        }
     }
 
     changeEntVal = (name, value) => {
