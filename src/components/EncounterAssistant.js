@@ -121,7 +121,7 @@ export class EncounterAssistant extends Component {
         const { tabNames, activeTab, boardSize, squares, selectedSquare, entities, tabColors } = this.state;
         // cardEnt - does a card need to be displayed
         const cardEnt = activeTab!==null && selectedSquare!==null && selectedSquare!==undefined && entities!==null && entities[activeTab]!==undefined && entities[activeTab][selectedSquare]!==undefined ? entities[activeTab][selectedSquare] : null;
-        console.log(cardEnt)
+
         return (
         <div className="encounterAssistant">
             <CommandLine

@@ -16,6 +16,22 @@ export class Cardview extends Component {
         propeffects: this.props.effects.slice(),
     };
 
+    componentDidUpdate() {
+        const { name } = this.props;
+        const { prophealth, propx, propy, propeffects } = this.state;
+        if (name!==this.state.name || prophealth!==this.props.health || propx!==this.props.x || propy!==this.props.y || !this.arraysMatch(propeffects, this.props.effects)) this.setState({
+            name,
+            health: this.props.health,
+            x: this.props.x,
+            y: this.props.y,
+            effects: this.props.effects.slice(),
+            prophealth: this.props.health,
+            propx: this.props.x,
+            propy: this.props.y,
+            propeffects: this.props.effects.slice(),
+        });
+    }
+
     changeVal = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -59,20 +75,8 @@ export class Cardview extends Component {
 
     render() {
         const { maxHeight, title, name } = this.props;
-        const { prophealth, propx, propy, propeffects } = this.state;
-        if (name!==this.state.name || prophealth!==this.props.health || propx!==this.props.x || propy!==this.props.y || !this.arraysMatch(propeffects, this.props.effects)) this.setState({
-            name,
-            health: this.props.health,
-            x: this.props.x,
-            y: this.props.y,
-            effects: this.props.effects.slice(),
-            prophealth: this.props.health,
-            propx: this.props.x,
-            propy: this.props.y,
-            propeffects: this.props.effects.slice(),
-        });
         const { health, x, y, effects, newEffect } = this.state;
-        console.log(effects, this.props.effects)
+
         return (
         <div className="card" style={{height: `${maxHeight}px`, maxHeight: `${maxHeight}px`}}>
             <header className="card-header" style={{backgroundColor:this.props.headerColor}}>

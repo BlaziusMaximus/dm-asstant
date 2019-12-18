@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+// import $ from 'jquery'
 import RunCommand from './RunCommand'
 import './CommandLine.css'
 import PropTypes from 'prop-types'
@@ -6,25 +7,44 @@ import PropTypes from 'prop-types'
 export class CommandLine extends Component {
     state = {
         command: "",
+        history: [],
+        selected: 0,
     };
 
     onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({ [e.target.name]: e.target.value, selected: this.state.history.length });
     }
 
     onSubmit = (e) => {
         e.preventDefault();
 
-        let { command } = this.state;
+        let { command, history } = this.state;
+        history.push(command);
         command = command.toLowerCase();
         // tokenize command
         let tokens = command.split(' ').filter(el => el !== ' ' && el !== '');
 
         this.props.runCommand(tokens[1], RunCommand(tokens));
-        this.setState({ command: '' });
+        this.setState({ command: '', history, selected: history.length });
+    }
+
+    onKeyDown = (e) => {
+        let { history, selected } = this.state;
+        switch (e.keyCode) {
+        case 38: //up
+            if (selected > 0) selected--;
+            break;
+        case 40: //down
+            if (selected < history.length) selected++;
+            break;
+        default:
+        }
+        this.setState({ selected });
     }
 
     render() {
+        const { command, history, selected } = this.state;
+
         return (
         <div className="columns is-centered commandLine" style={{width: "100%",backgroundColor:"whitesmoke"}}>
         <div className="column is-half">
@@ -33,11 +53,13 @@ export class CommandLine extends Component {
             <div className="control commInp">
                 <input
                     className="input is-rounded"
-                    type="text"
                     name="command"
+                    type="text"
+                    ref="input"
                     placeholder="command..."
-                    value={this.state.command}
+                    value={selected===history.length?command:history[selected]}
                     onChange={this.onChange}
+                    onKeyDown={this.onKeyDown}
                 />
             </div>
             <div className="control commBtn">
