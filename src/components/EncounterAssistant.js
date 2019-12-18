@@ -101,16 +101,27 @@ export class EncounterAssistant extends Component {
     }
 
     runCommand = (ent, command) => {
-        let { activeTab, entities } = this.state;
+        let { entities, activeTab } = this.state;
         let newEnt = command(entities, activeTab);
         if (newEnt!==null) entities[activeTab][ent] = newEnt;
         this.setState({ entities });
+    }
+
+    changeEntVal = (name, value) => {
+        let { entities, activeTab, selectedSquare } = this.state;
+        entities[activeTab][selectedSquare][name] = value;
+        this.setState({ entities });
+    }
+
+    changeEntEffects = (effects) => {
+
     }
 
     render() {
         const { tabNames, activeTab, boardSize, squares, selectedSquare, entities, tabColors } = this.state;
         // cardEnt - does a card need to be displayed
         const cardEnt = activeTab!==null && selectedSquare!==null && selectedSquare!==undefined && entities!==null && entities[activeTab]!==undefined && entities[activeTab][selectedSquare]!==undefined ? entities[activeTab][selectedSquare] : null;
+        console.log(cardEnt)
         return (
         <div className="encounterAssistant">
             <CommandLine
@@ -167,6 +178,7 @@ export class EncounterAssistant extends Component {
                     x={cardEnt ? cardEnt.x : null}
                     y={cardEnt ? cardEnt.y : null}
                     effects={cardEnt ? cardEnt.effects : null}
+                    changeVal={this.changeEntVal}
                 />
                 :
                 <div className="blankCard">
