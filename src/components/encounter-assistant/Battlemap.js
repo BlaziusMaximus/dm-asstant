@@ -11,9 +11,12 @@ export class Battlemap extends Component {
         <tr className="battlemapRow" key={rowkey}>
             {row.map((square, sqkey) => {
                 // everything here happens at an individual square
+                
+                // is square local entity
                 let localSq = Object.keys(localEnts).filter(ent => {
                     return parseInt(localEnts[ent].x)===sqkey && parseInt(localEnts[ent].y)===boardSize-rowkey-1;
                 })[0];
+                // get global entities
                 let ghostSqs = [];
                 ghostEnts.forEach((tab, tabkey) => {
                     Object.keys(tab).forEach(ent => {
@@ -22,12 +25,16 @@ export class Battlemap extends Component {
                         }
                     });
                 });
+                // display local rather than global
                 if (localSq) ghostSqs = [];
+                // global entities' nationalities
                 let ghostConflicts = ghostSqs.map((sq,i) => {
                                 // color                            starting %                      ending %
                     return `${tabColors[sq%tabColors.length]} ${(100/ghostSqs.length)*(i)}% ${(100/ghostSqs.length)*(i+1)}%`;
                 });
+                // global entity nationality
                 let ghostColor = ghostSqs.length!==0?ghostSqs.length===1?tabColors[ghostSqs[0]%tabColors.length]:"":"";
+                
                 return (
                 <td
                     className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":""))}
@@ -35,7 +42,6 @@ export class Battlemap extends Component {
                     style={{
                         width: squareSize,
                         height: squareSize,
-                        // backgroundColor: ghostSqs.length!==0 ? "#b2764e" : "",
                         backgroundColor: ghostColor,
                         background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:"null",
                     }}
