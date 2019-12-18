@@ -3,6 +3,8 @@ import $ from 'jquery'
 import CommandLine from './encounter-assistant/CommandLine'
 import Tabs from './encounter-assistant/Tabs'
 import Battlemap from './encounter-assistant/Battlemap'
+import Listview from './encounter-assistant/Listview'
+import Cardview from './encounter-assistant/Cardview'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
 import './EncounterAssistant.css'
@@ -89,7 +91,8 @@ export class EncounterAssistant extends Component {
         evt.preventDefault();
         let { entities, activeTab } = this.state;
         let ent = evt.dataTransfer.getData('Text');
-        if (!$(evt.currentTarget).hasClass("is-occupied") && entities[activeTab][ent] != null) {
+        console.log(evt.currentTarget)
+        if (!$(evt.currentTarget).hasClass("is-local-ent") && entities[activeTab][ent] != null) {
             entities[activeTab][ent] = $.extend(entities[activeTab][ent], {
                 x: parseInt(x),
                 y: parseInt(y),
@@ -105,8 +108,9 @@ export class EncounterAssistant extends Component {
     }
 
     render() {
-        const { tabNames, activeTab, boardSize, squares, selectedSquare, entities } = this.state;
-        
+        const { tabNames, activeTab, boardSize, squares, selectedSquare, entities, tabColors } = this.state;
+        // cardEnt - does a card need to be displayed
+        const cardEnt = activeTab!==null && selectedSquare!==null && selectedSquare!==undefined && entities!==null && entities[activeTab]!==undefined && entities[activeTab][selectedSquare]!==undefined ? entities[activeTab][selectedSquare] : null;
         return (
         <div className="encounterAssistant">
             <CommandLine
@@ -119,7 +123,7 @@ export class EncounterAssistant extends Component {
                 activeTab={this.state.activeTab}
                 activateTab={this.activateTab}
                 setTabName={this.setTabName}
-                tabColors={this.state.tabColors}
+                tabColors={tabColors}
                 highlightedTabs={this.state.highlightedTabs}
             />
             {activeTab !== null && tabNames.length-1 >= activeTab && tabNames[activeTab] !== "" ?
@@ -129,21 +133,38 @@ export class EncounterAssistant extends Component {
                     boardSize={boardSize}
                     squares={activeTab!=null&&tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
                     squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
-                    selectedSquare={selectedSquare}
-                    tabColors={this.state.tabColors}
+                    selectSquare={(square) => this.setState({ selectedSquare: square })}
+                    tabColors={tabColors}
                     localEnts={entities[activeTab]?entities[activeTab]:{}}
                     ghostEnts={this.getGhostEnts()}
                     highlightTabs={this.highlightTabs}
                     unHighlightTabs={this.unHighlightTabs}
-                    activateTab={(localSq, ghostSqs) => localSq?null:(ghostSqs.length===1?this.activateTab(ghostSqs[0]):null)}
+                    activateTab={(localSq, ghostSqs, ghostSqEnts) => {
+                        if (!localSq && ghostSqs.length===1 && ghostSqEnts.length===1) {
+                            this.unHighlightTabs();
+                            this.activateTab(ghostSqs[0]);
+                            this.setState({ selectedSquare: ghostSqEnts[0] });
+                        }
+                    }}
                     handleDrop={this.handleSquareDrop}
                 />
                 </div>
                 <div className="column is-4" style={{backgroundColor: "black"}}>
-
+                <Listview
+                />
                 </div>
                 <div className="column is-4" style={{backgroundColor: "red"}}>
-                    
+                {cardEnt !== null ?
+                <Cardview
+                    headerColor={tabColors[activeTab]}
+                    title={tabNames[activeTab]}
+                    name={selectedSquare}
+                    health={cardEnt ? cardEnt.health : null}
+                    x={cardEnt ? cardEnt.x : null}
+                    y={cardEnt ? cardEnt.y : null}
+                    effects={cardEnt ? cardEnt.effects : null}
+                />
+                :null}
                 </div>
             </div>
             :null}

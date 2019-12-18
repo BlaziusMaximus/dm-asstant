@@ -17,11 +17,11 @@ export class Battlemap extends Component {
                     return parseInt(localEnts[ent].x)===sqkey && parseInt(localEnts[ent].y)===boardSize-rowkey-1;
                 })[0];
                 // get global entities
-                let ghostSqs = [];
+                let ghostSqs = []; let ghostSqEnts = [];
                 ghostEnts.forEach((tab, tabkey) => {
                     Object.keys(tab).forEach(ent => {
                         if (parseInt(tab[ent].x)===sqkey && parseInt(tab[ent].y)===boardSize-rowkey-1) {
-                            ghostSqs.push(tabkey);
+                            ghostSqs.push(tabkey); ghostSqEnts.push(ent);
                         }
                     });
                 });
@@ -42,12 +42,11 @@ export class Battlemap extends Component {
                     style={{
                         width: squareSize,
                         height: squareSize,
-                        backgroundColor: ghostColor,
-                        background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:"null",
+                        background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:ghostColor,
                     }}
                     onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):null}
                     onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():null}
-                    onClick={() => {this.props.unHighlightTabs(); this.props.activateTab(localSq, ghostSqs)}}
+                    onClick={() => this.props.activateTab(localSq, ghostSqs, ghostSqEnts)}
                     onDragEnter={(e) => e.preventDefault()}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => this.props.handleDrop(sqkey, boardSize-rowkey-1, e)}>
@@ -58,7 +57,8 @@ export class Battlemap extends Component {
                             onDragStart={(evt) => {
                                 let dt = evt.dataTransfer;
                                 dt.setData('Text', localSq);
-                            }}>
+                            }}
+                            onClick={() => this.props.selectSquare(localSq)}>
                         </div>
                         :null}
                 </td>);
@@ -84,7 +84,7 @@ Battlemap.propTypes = {
     boardSize: PropTypes.number.isRequired,
     squares: PropTypes.array.isRequired,
     squareSize: PropTypes.number.isRequired,
-    // selectedSquare: PropTypes.number.isRequired,
+    selectSquare: PropTypes.func.isRequired,
     localEnts: PropTypes.object.isRequired,
     ghostEnts: PropTypes.array.isRequired,
 };
