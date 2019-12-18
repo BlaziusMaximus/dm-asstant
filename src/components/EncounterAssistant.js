@@ -48,7 +48,7 @@ export class EncounterAssistant extends Component {
         tabNames.splice(index, 1);
         squares.splice(index, 1);
         entities.splice(index, 1);
-        this.setState({ tabNames, squares, entities });
+        this.setState({ tabNames, squares, entities, activeTab: null });
         this.props.updateState(this.state);
     }
 
@@ -87,10 +87,9 @@ export class EncounterAssistant extends Component {
 
     handleSquareDrop = (x, y, evt) => {
         evt.preventDefault();
-
         let { entities, activeTab } = this.state;
         let ent = evt.dataTransfer.getData('Text');
-        if (!$(evt.currentTarget).hasClass("is-occupied")) {
+        if (!$(evt.currentTarget).hasClass("is-occupied") && entities[activeTab][ent] != null) {
             entities[activeTab][ent] = $.extend(entities[activeTab][ent], {
                 x: parseInt(x),
                 y: parseInt(y),
@@ -123,19 +122,20 @@ export class EncounterAssistant extends Component {
                 tabColors={this.state.tabColors}
                 highlightedTabs={this.state.highlightedTabs}
             />
+            {activeTab !== null && tabNames.length-1 >= activeTab && tabNames[activeTab] !== "" ?
             <div className="columns" style={{width: "100%", margin:0}}>
                 <div className="column is-4" style={{padding:0,textAlign:"center"}}>
                 <Battlemap
                     boardSize={boardSize}
-                    squares={tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
+                    squares={activeTab!=null&&tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
                     squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
                     selectedSquare={selectedSquare}
                     tabColors={this.state.tabColors}
-                    localEnts={entities[activeTab]}
+                    localEnts={entities[activeTab]?entities[activeTab]:{}}
                     ghostEnts={this.getGhostEnts()}
                     highlightTabs={this.highlightTabs}
                     unHighlightTabs={this.unHighlightTabs}
-                    activateTab={(localSq, ghostSqs) => localSq?null:(ghostSqs.length!==0?this.activateTab(ghostSqs[0]):null)}
+                    activateTab={(localSq, ghostSqs) => localSq?null:(ghostSqs.length===1?this.activateTab(ghostSqs[0]):null)}
                     handleDrop={this.handleSquareDrop}
                 />
                 </div>
@@ -146,6 +146,7 @@ export class EncounterAssistant extends Component {
                     
                 </div>
             </div>
+            :null}
         </div>
         )
     }

@@ -6,7 +6,7 @@ export class Battlemap extends Component {
     
 
     renderRow = (row, rowkey) => {
-        const { boardSize, squareSize, localEnts, ghostEnts } = this.props;
+        const { boardSize, squareSize, localEnts, ghostEnts, tabColors } = this.props;
         return (
         <tr className="battlemapRow" key={rowkey}>
             {row.map((square, sqkey) => {
@@ -15,7 +15,6 @@ export class Battlemap extends Component {
                     return parseInt(localEnts[ent].x)===sqkey && parseInt(localEnts[ent].y)===boardSize-rowkey-1;
                 })[0];
                 let ghostSqs = [];
-                // console.log(ghostEnts)
                 ghostEnts.forEach((tab, tabkey) => {
                     Object.keys(tab).forEach(ent => {
                         if (parseInt(tab[ent].x)===sqkey && parseInt(tab[ent].y)===boardSize-rowkey-1) {
@@ -24,6 +23,11 @@ export class Battlemap extends Component {
                     });
                 });
                 if (localSq) ghostSqs = [];
+                let ghostConflicts = ghostSqs.map((sq,i) => {
+                                // color                            starting %                      ending %
+                    return `${tabColors[sq%tabColors.length]} ${(100/ghostSqs.length)*(i)}% ${(100/ghostSqs.length)*(i+1)}%`;
+                });
+                let ghostColor = ghostSqs.length!==0?ghostSqs.length===1?tabColors[ghostSqs[0]%tabColors.length]:"":"";
                 return (
                 <td
                     className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":""))}
@@ -32,7 +36,8 @@ export class Battlemap extends Component {
                         width: squareSize,
                         height: squareSize,
                         // backgroundColor: ghostSqs.length!==0 ? "#b2764e" : "",
-                        backgroundColor: ghostSqs.length!==0?ghostSqs.length===1?this.props.tabColors[ghostSqs[0]%this.props.tabColors.length]:"black":"",
+                        backgroundColor: ghostColor,
+                        background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:"null",
                     }}
                     onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):null}
                     onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():null}
