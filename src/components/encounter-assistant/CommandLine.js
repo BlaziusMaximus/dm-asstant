@@ -18,9 +18,9 @@ export class CommandLine extends Component {
     onSubmit = (e) => {
         e.preventDefault();
 
-        let { command, history } = this.state;
-        let ogCommand = command;
-        command = command.toLowerCase();
+        let { command, history, selected } = this.state;
+        let ogCommand = selected===history.length?command:history[selected];
+        command = ogCommand.toLowerCase();
         // tokenize command
         let tokens = command.split(' ').filter(el => el !== ' ' && el !== '');
         let command2run = RunCommand(tokens);

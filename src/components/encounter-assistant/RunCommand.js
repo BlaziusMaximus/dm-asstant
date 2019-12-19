@@ -2,7 +2,7 @@ import $ from 'jquery'
 
 function RunCommand(tokens) {
     let func;
-    // console.log(tokens)
+    console.log(tokens)
     switch (tokens[0]) {
     case "move":
         func = ((ents, tab) => {
@@ -35,6 +35,10 @@ function RunCommand(tokens) {
                         effects: ents[tab][ent].effects.concat([effect]),
                     });
                 }
+            } else if (ents[tab][ent]!=null) {
+                return ents[tab][ent].effects;
+            } else {
+                return [];
             }
         });
         break;
