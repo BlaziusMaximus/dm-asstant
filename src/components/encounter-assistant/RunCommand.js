@@ -103,6 +103,7 @@ function RunCommand(tokens) {
         })
         break;
     default:
+        func = null;
     }
 
     return func;

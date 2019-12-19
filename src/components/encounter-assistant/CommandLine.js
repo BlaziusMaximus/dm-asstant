@@ -19,13 +19,16 @@ export class CommandLine extends Component {
         e.preventDefault();
 
         let { command, history } = this.state;
-        history.push(command);
+        let ogCommand = command;
         command = command.toLowerCase();
         // tokenize command
         let tokens = command.split(' ').filter(el => el !== ' ' && el !== '');
-
-        this.props.runCommand(tokens[1], RunCommand(tokens));
-        this.setState({ command: '', history, selected: history.length });
+        let command2run = RunCommand(tokens);
+        if (command2run!==null) {
+            this.props.runCommand(tokens[1], command2run);
+            history.push(ogCommand);
+            this.setState({ command: '', history, selected: history.length });
+        }
     }
 
     onKeyDown = (e) => {
