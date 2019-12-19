@@ -60,6 +60,7 @@ export class TabItem extends Component {
     }
 
     clickIcon = (e) => {
+        console.log("clicl")
         e.stopPropagation();
         this.hoverOff(e);
         const { id } = this.props;
@@ -84,12 +85,13 @@ export class TabItem extends Component {
         const { editIcon, delIcon, checkIcon } = this.state;
 
         return (
-        inputTab ?
+        <React.Fragment>
+        {inputTab ?
         <li
             id={id}
             className={"group inputTab ".concat(activeTab?"is-active":"")}
             onClick={this.activateTab}>
-            <p>
+            <p className="tabP">
                 <input
                     className="input is-small"
                     type="text"
@@ -98,6 +100,7 @@ export class TabItem extends Component {
                     ref={(inp) => this.tabInput = inp}
                     onChange={this.onChange}
                     onKeyPress={this.onKeyPress}
+                    onClick={(e) => e.stopPropagation()}
                 />
                 <span className="icon is-small">
                     <i
@@ -117,7 +120,7 @@ export class TabItem extends Component {
             id={id}
             className={"group displayTab ".concat(activeTab?"is-active":"")}
             onClick={this.activateTab}>
-            <p style={{backgroundColor: this.props.highlighted?this.props.tabColor:""}}>
+            <p className="tabP" style={{backgroundColor: this.props.highlighted?this.props.tabColor:""}}>
                 <span>{name}</span>
                 {activeTab ?
                 <span className="icons">
@@ -150,7 +153,8 @@ export class TabItem extends Component {
                 </span>
                 :null)}
             </p>
-        </li>
+        </li>}
+        </React.Fragment>
         );
     }
 }
