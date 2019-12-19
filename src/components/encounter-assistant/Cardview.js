@@ -9,6 +9,7 @@ export class Cardview extends Component {
         x: this.props.x,
         y: this.props.y,
         effects: this.props.effects.slice(),
+        effecticons: Array(this.props.effects.length).fill(false),
         newEffect: null,
         prophealth: this.props.health,
         propx: this.props.x,
@@ -47,20 +48,38 @@ export class Cardview extends Component {
     changeEffect = (e, i) => {
         let { effects } = this.state;
         effects[i] = e.target.value;
-        console.log(effects, this.props.effects)
         this.setState({ effects });
+    }
+
+    delEffect = (i) => {
+        let { effects } = this.state;
+        effects.splice(i,1);
+        this.setState({ effects });
+        this.props.changeVal("effects", effects);
     }
 
     submitEffects = (e) => {
         let { newEffect, effects } = this.state;
         if (e.key==="Enter") {
-            if (newEffect!==null) {
+            if (newEffect!=null && newEffect.length!==0) {
                 effects.push(newEffect);
                 newEffect = "";
                 this.setState({ effects, newEffect });
+                this.props.changeVal("effects", effects);
             }
-            this.props.changeVal("effects", effects);
         }
+    }
+
+    hoverOn = (i) => {
+        let { effecticons } = this.state;
+        effecticons[i] = true;
+        this.setState({ effecticons });
+    }
+
+    hoverOff = (i) => {
+        let { effecticons } = this.state;
+        effecticons[i] = false;
+        this.setState({ effecticons });
     }
 
     arraysMatch = (arr1, arr2) => {
@@ -75,7 +94,7 @@ export class Cardview extends Component {
 
     render() {
         const { maxHeight, title, name } = this.props;
-        const { health, x, y, effects, newEffect } = this.state;
+        const { health, x, y, effects, effecticons, newEffect } = this.state;
 
         return (
         <div className="card" style={{height: `${maxHeight}px`, maxHeight: `${maxHeight}px`}}>
@@ -152,20 +171,34 @@ export class Cardview extends Component {
                             {effects !== null && effects.length !== 0 ?
                             effects.map((ef, key) => {
                                 return (
-                                <a className="panel-block is-active textInput" key={key}>
-                                    <span className="panel-icon">
-                                        <i className="fas fa-dice-d20" aria-hidden="true"></i>
-                                    </span>
-                                    <div className="control">
-                                        <input
-                                            className={"input ".concat(ef!==this.props.effects[key]?"is-warning":"")}
-                                            type="text"
-                                            placeholder="effect..."
-                                            value={ef}
-                                            onChange={(e) => this.changeEffect(e, key)}
-                                            onKeyPress={this.submitEffects}
-                                        />
-                                    </div>
+                                <a
+                                    className="panel-block is-active textInput"
+                                    key={key}
+                                    onMouseOver={() => this.hoverOn(key)}
+                                    onMouseOut={() => this.hoverOff(key)}>
+                                        {effecticons[key] ?
+                                        <span className="panel-icon">
+                                            <i
+                                                className="fas fa-trash-alt"
+                                                aria-hidden="true"
+                                                onClick={() => this.delEffect(key)}>
+                                            </i>
+                                        </span>
+                                        :
+                                        <span className="panel-icon">
+                                            <i className="fas fa-dice-d20" aria-hidden="true"></i>
+                                        </span>
+                                        }
+                                        <div className="control">
+                                            <input
+                                                className={"input ".concat(ef!==this.props.effects[key]?"is-warning":"")}
+                                                type="text"
+                                                placeholder="effect..."
+                                                value={ef}
+                                                onChange={(e) => this.changeEffect(e, key)}
+                                                onKeyPress={this.submitEffects}
+                                            />
+                                        </div>
                                 </a>
                                 );
                             })
