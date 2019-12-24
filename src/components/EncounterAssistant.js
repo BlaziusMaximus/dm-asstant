@@ -9,6 +9,7 @@ import './EncounterAssistant.css'
 
 export class EncounterAssistant extends Component {
     state = {
+        entities: [{}],
         tabNames: ["New Group", ""],
         tabColors: [
             "lightcoral",
@@ -22,30 +23,25 @@ export class EncounterAssistant extends Component {
         highlightedTabs: [],
         activeTab: 0,
         action: "",
-        squares: [[]],
         commandsToRun: [],
     };
 
     componentDidMount() {
         if (this.props.state!=null) this.setState(this.props.state);
-        let { boardSize } = this.state;
-        this.setState({ squares: [Array(boardSize).fill(Array(boardSize).fill(null))] });
     }
 
     addTab = () => {
-        let { squares, boardSize, entities } = this.state;
-        squares.push(Array(boardSize).fill(Array(boardSize).fill(null)));
+        let { boardSize, entities } = this.state;
         entities.push({});
-        this.setState({ tabNames: this.state.tabNames.concat([""]), squares, entities });
+        this.setState({ tabNames: this.state.tabNames.concat([""]), entities });
         this.props.updateState(this.state);
     }
 
     delTab = (index) => {
-        let { tabNames, squares, entities } = this.state;
+        let { tabNames, entities } = this.state;
         tabNames.splice(index, 1);
-        squares.splice(index, 1);
         entities.splice(index, 1);
-        this.setState({ tabNames, squares, entities, activeTab: null });
+        this.setState({ tabNames, entities, activeTab: null });
         this.props.updateState(this.state);
     }
 
@@ -82,29 +78,6 @@ export class EncounterAssistant extends Component {
         this.setState({ highlightedTabs: [] });
     }
 
-    handleSquareDrop = (x, y, evt) => {
-        evt.preventDefault();
-        let { entities, activeTab } = this.state;
-        let ent = evt.dataTransfer.getData('Text');
-        if (!$(evt.currentTarget).hasClass("is-local-ent") && entities[activeTab][ent] != null) {
-            entities[activeTab][ent] = $.extend(entities[activeTab][ent], {
-                x: parseInt(x),
-                y: parseInt(y),
-            });
-            this.setState({ entities })
-        }
-    }
-
-    changeEntVal = (name, value) => {
-        let { entities, activeTab, selectedSquare } = this.state;
-        entities[activeTab][selectedSquare][name] = value;
-        this.setState({ entities });
-    }
-
-    changeEntEffects = (effects) => {
-
-    }
-
     submitCommand = (tokens) => {
         let { commandsToRun } = this.state;
         commandsToRun.push(tokens);
@@ -112,13 +85,20 @@ export class EncounterAssistant extends Component {
     }
 
     completeCommands = () => {
-        this.setState({ commandsToRun: [] });
+        if (this.state.commandsToRun.length > 0) {
+            this.setState({ commandsToRun: [] });
+        }
+    }
+
+    updateEnts = (ents) => {
+        let { entities, activeTab } = this.state;
+        entities[activeTab] = ents;
+        this.setState({ entities });
     }
 
     render() {
-        const { tabNames, activeTab, boardSize, squares, selectedSquare, entities, tabColors } = this.state;
+        const { tabNames, activeTab, entities, tabColors, commandsToRun } = this.state;
         // cardEnt - does a card need to be displayed
-        const cardEnt = activeTab!==null && selectedSquare!==null && selectedSquare!==undefined && entities!==null && entities[activeTab]!==undefined && entities[activeTab][selectedSquare]!==undefined ? entities[activeTab][selectedSquare] : null;
 
         return (
         <div className="encounterAssistant">
@@ -132,66 +112,27 @@ export class EncounterAssistant extends Component {
                 activeTab={this.state.activeTab}
                 activateTab={this.activateTab}
                 setTabName={this.setTabName}
-                tabColors={this.props.tabColors}
+                tabColors={tabColors}
                 highlightedTabs={this.state.highlightedTabs}
             />
 
-            <ViewInstance
-                commandsToRun={this.state.commandsToRun}
-                completeCommands={this.completeCommands}
-            />
 
-            {activeTab !== null && tabNames.length-1 >= activeTab && tabNames[activeTab] !== "" ?
-            <div className="columns" style={{width: "100%", margin:0}}>
-                <div className="column is-4" style={{padding:0,textAlign:"center"}}>
-                <Battlemap
-                    boardSize={boardSize}
-                    squares={activeTab!=null&&tabNames[activeTab]!==""&&squares.length>activeTab?squares[activeTab]:[[]]}
-                    squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
-                    selectedSquare={selectedSquare}
-                    selectSquare={(square) => this.setState({ selectedSquare: square })}
-                    tabColors={tabColors}
-                    localEnts={entities[activeTab]?entities[activeTab]:{}}
-                    ghostEnts={this.getGhostEnts()}
-                    highlightTabs={this.highlightTabs}
-                    unHighlightTabs={this.unHighlightTabs}
-                    activateTab={(localSq, ghostSqs, ghostSqEnts) => {
-                        if (!localSq && ghostSqs.length===1 && ghostSqEnts.length===1) {
-                            this.unHighlightTabs();
-                            this.activateTab(ghostSqs[0]);
-                            this.setState({ selectedSquare: ghostSqEnts[0] });
-                        } else if (!localSq) {
-                            this.setState({ selectedSquare: null });
-                        }
-                    }}
-                    handleDrop={this.handleSquareDrop}
-                />
-                </div>
-                <div className="column is-4" style={{backgroundColor: "black"}}>
-                <Listview
-                />
-                </div>
-                <div className="column is-4 cardCol">
-                {cardEnt !== null ?
-                <Cardview
-                    maxHeight={(this.props.width*(4/12)-boardSize)*.95}
-                    headerColor={tabColors[activeTab]}
-                    title={tabNames[activeTab]}
-                    name={selectedSquare}
-                    health={cardEnt ? cardEnt.health : null}
-                    x={cardEnt ? cardEnt.x : null}
-                    y={cardEnt ? cardEnt.y : null}
-                    effects={cardEnt ? cardEnt.effects : null}
-                    changeVal={this.changeEntVal}
-                />
-                :
-                <div className="blankCard">
-                    <h1 className="title is-3">No entity selected</h1>
-                    <h2 className="subtitle is-5">Selected an entity on the Battlemap to display a card here</h2>
-                </div>
-                }
-                </div>
-            </div>
+            {activeTab != null && tabNames.length-1 >= activeTab && tabNames[activeTab] !== "" ?
+            <ViewInstance
+                width={this.props.width}
+                height={this.props.height}
+                entities={entities[activeTab]}
+                name={tabNames[activeTab]}
+                color={tabColors[activeTab]}
+                tabColors={tabColors}
+                commandsToRun={commandsToRun}
+                completeCommands={this.completeCommands}
+                getGhostEnts={this.getGhostEnts}
+                updateEnts={this.updateEnts}
+                highlightTabs={this.highlightTabs}
+                unHighlightTabs={this.unHighlightTabs}
+                activateTab={this.activateTab}
+            />
             :null}
         </div>
         )

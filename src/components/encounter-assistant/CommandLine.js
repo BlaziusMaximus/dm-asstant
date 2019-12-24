@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 // import $ from 'jquery'
-import RunCommand from './RunCommand'
 import './CommandLine.css'
 import PropTypes from 'prop-types'
 
@@ -76,7 +75,7 @@ export class CommandLine extends Component {
 }
 
 CommandLine.propTypes = {
-    runCommand: PropTypes.func.isRequired,
+    submitCommand: PropTypes.func.isRequired,
 };
 
 export default CommandLine

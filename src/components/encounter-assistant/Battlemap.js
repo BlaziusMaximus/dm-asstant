@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import './Battlemap.css'
 
 export class Battlemap extends Component {
-    
 
     renderRow = (row, rowkey) => {
         const { boardSize, squareSize, selectedSquare, localEnts, ghostEnts, tabColors } = this.props;
@@ -73,10 +72,12 @@ export class Battlemap extends Component {
     }
 
     render() {
+        let { boardSize } = this.props;
+
         return (
         <table className="battlemap" tabIndex="0" style={{margin: `${this.props.squareSize/4}px`}}>
         <tbody>
-            {this.props.squares.map((row, key) => 
+            {Array(boardSize).fill(Array(boardSize).fill(null)).map((row, key) => 
                 this.renderRow(row, key)
             )}
         </tbody>
@@ -87,7 +88,6 @@ export class Battlemap extends Component {
 
 Battlemap.propTypes = {
     boardSize: PropTypes.number.isRequired,
-    squares: PropTypes.array.isRequired,
     squareSize: PropTypes.number.isRequired,
     selectSquare: PropTypes.func.isRequired,
     localEnts: PropTypes.object.isRequired,

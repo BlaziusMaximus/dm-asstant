@@ -10,7 +10,7 @@ export class Cardview extends Component {
         y: this.props.y,
         effects: this.props.effects.slice(),
         effecticons: Array(this.props.effects.length).fill(false),
-        newEffect: null,
+        newEffect: "",
         prophealth: this.props.health,
         propx: this.props.x,
         propy: this.props.y,
@@ -61,7 +61,7 @@ export class Cardview extends Component {
     submitEffects = (e) => {
         let { newEffect, effects } = this.state;
         if (e.key==="Enter") {
-            if (newEffect!=null && newEffect.length!==0) {
+            if (newEffect!=null && newEffect.length!==0 && !effects.includes(newEffect)) {
                 effects.push(newEffect);
                 newEffect = "";
                 this.setState({ effects, newEffect });
