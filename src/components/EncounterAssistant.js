@@ -2,15 +2,12 @@ import React, { Component } from 'react'
 import $ from 'jquery'
 import CommandLine from './encounter-assistant/CommandLine'
 import Tabs from './encounter-assistant/Tabs'
-import Battlemap from './encounter-assistant/Battlemap'
-import Listview from './encounter-assistant/Listview'
-import Cardview from './encounter-assistant/Cardview'
+import ViewInstance from './encounter-assistant/ViewInstance'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
 import './EncounterAssistant.css'
 
 export class EncounterAssistant extends Component {
-    tabID = uuid.v4();
     state = {
         tabNames: ["New Group", ""],
         tabColors: [
@@ -20,15 +17,13 @@ export class EncounterAssistant extends Component {
             "lightgoldenrodyellow",
             "lightsalmon",
             "lightseagreen",
-            "lightslategrey"
+            "lightslategrey",
         ],
         highlightedTabs: [],
         activeTab: 0,
         action: "",
-        boardSize: 10,
         squares: [[]],
-        selectedSquare: null,
-        entities: [{}],
+        commandsToRun: [],
     };
 
     componentDidMount() {
@@ -100,20 +95,6 @@ export class EncounterAssistant extends Component {
         }
     }
 
-    runCommand = (ent, command) => {
-        let { entities, activeTab, tabNames } = this.state;
-        let newEnt = command(entities, activeTab);
-        if (newEnt==="delete") {
-            delete entities[activeTab][ent];
-            this.setState({ entities });
-        } else if (Array.isArray(newEnt) && newEnt[0]==="board") {
-            this.setState({ boardSize: newEnt[1], entities: Array(tabNames.length+1).fill({}), squares: Array(tabNames.length).fill(Array(newEnt[1]).fill(Array(newEnt[1]).fill(null))), selectedSquare: null });
-        } else if (newEnt!==null) {
-            entities[activeTab][ent] = newEnt;
-            this.setState({ entities });
-        }
-    }
-
     changeEntVal = (name, value) => {
         let { entities, activeTab, selectedSquare } = this.state;
         entities[activeTab][selectedSquare][name] = value;
@@ -124,6 +105,16 @@ export class EncounterAssistant extends Component {
 
     }
 
+    submitCommand = (tokens) => {
+        let { commandsToRun } = this.state;
+        commandsToRun.push(tokens);
+        this.setState({ commandsToRun });
+    }
+
+    completeCommands = () => {
+        this.setState({ commandsToRun: [] });
+    }
+
     render() {
         const { tabNames, activeTab, boardSize, squares, selectedSquare, entities, tabColors } = this.state;
         // cardEnt - does a card need to be displayed
@@ -132,18 +123,24 @@ export class EncounterAssistant extends Component {
         return (
         <div className="encounterAssistant">
             <CommandLine
-                runCommand={this.runCommand}
+                submitCommand={this.submitCommand}
             />
             <Tabs
-                tabID={this.tabID}
+                tabID={uuid.v4()}
                 addTab={this.addTab}
                 delTab={this.delTab}
                 activeTab={this.state.activeTab}
                 activateTab={this.activateTab}
                 setTabName={this.setTabName}
-                tabColors={tabColors}
+                tabColors={this.props.tabColors}
                 highlightedTabs={this.state.highlightedTabs}
             />
+
+            <ViewInstance
+                commandsToRun={this.state.commandsToRun}
+                completeCommands={this.completeCommands}
+            />
+
             {activeTab !== null && tabNames.length-1 >= activeTab && tabNames[activeTab] !== "" ?
             <div className="columns" style={{width: "100%", margin:0}}>
                 <div className="column is-4" style={{padding:0,textAlign:"center"}}>

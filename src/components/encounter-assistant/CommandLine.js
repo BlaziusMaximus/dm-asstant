@@ -23,9 +23,8 @@ export class CommandLine extends Component {
         command = ogCommand.toLowerCase();
         // tokenize command
         let tokens = command.split(' ').filter(el => el !== ' ' && el !== '');
-        let command2run = RunCommand(tokens);
-        if (command2run!==null) {
-            this.props.runCommand(tokens[1], command2run);
+        if (tokens!=null) {
+            this.props.submitCommand(tokens);
             history.push(ogCommand);
             this.setState({ command: '', history, selected: history.length });
         }
