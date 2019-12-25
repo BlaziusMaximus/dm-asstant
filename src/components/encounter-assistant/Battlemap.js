@@ -5,7 +5,7 @@ import './Battlemap.css'
 export class Battlemap extends Component {
 
     renderRow = (row, rowkey) => {
-        const { boardSize, squareSize, selectedSquare, localEnts, ghostEnts, tabColors } = this.props;
+        const { boardSize, squareSize, selectedSquare, highlightedSquare, localEnts, ghostEnts, tabColors } = this.props;
         return (
         <tr className="battlemapRow" key={rowkey}>
             {row.map((square, sqkey) => {
@@ -36,7 +36,7 @@ export class Battlemap extends Component {
                 console.log(localSq===selectedSquare)
                 return (
                 <td
-                    className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":""))}
+                    className={"battlemapSquare ".concat(localSq?"is-local-ent":(ghostSqs.length!==0?"is-ghost-ent":"")).concat(highlightedSquare===localSq?" is-highlighted":"")}
                     key={sqkey}
                     style={{
                         width: squareSize,
@@ -44,8 +44,8 @@ export class Battlemap extends Component {
                         background: ghostSqs.length>1?`linear-gradient(135deg, ${ghostConflicts})`:ghostColor,
                         borderRadius: "8px",
                     }}
-                    onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):null}
-                    onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():null}
+                    onMouseOver={() => ghostSqs.length!==0?this.props.highlightTabs(ghostSqs):localSq!=null?this.props.highlightSquare(localSq):null}
+                    onMouseOut={() => ghostSqs.length!==0?this.props.unHighlightTabs():localSq!=null?this.props.unHighlightSquare():null}
                     onClick={() => this.props.activateTab(localSq, ghostSqs, ghostSqEnts)}
                     onDragEnter={(e) => e.preventDefault()}
                     onDragOver={(e) => e.preventDefault()}

@@ -9,6 +9,7 @@ export class ViewInstance extends Component {
     state = {
         selectedSquare: null,
         boardSize: 10,
+        highlightedEnt: "",
     };
 
     componentDidUpdate() {
@@ -72,6 +73,7 @@ export class ViewInstance extends Component {
                 )).length !== 0;
                 if (entities[ent]==null && health!=null && x!=null && y!=null && conflict===false) {
                     entities[ent] = {
+                        maxHealth: health,
                         health,
                         x,
                         y,
@@ -123,6 +125,7 @@ export class ViewInstance extends Component {
                 y: parseInt(y),
             });
             this.props.updateEnts(entities);
+            this.unHighlightEnt();
         }
     }
 
@@ -137,11 +140,20 @@ export class ViewInstance extends Component {
         
     }
 
+    highlightEnt = (ent) => {
+        console.log(ent)
+        this.setState({ highlightedEnt: ent });
+    }
+
+    unHighlightEnt = () => {
+        this.setState({ highlightedEnt: "" });
+    }
+
     render() {
-        const { selectedSquare, boardSize } = this.state;
+        const { selectedSquare, boardSize, highlightedEnt } = this.state;
         const { entities, color, tabColors } = this.props;
         const cardEnt = selectedSquare!=null && entities!=null ? entities[selectedSquare] : null;
-        console.log(entities)
+        console.log(highlightedEnt)
         return (
         <div className="viewInstance columns" style={{width: "100%", margin:0}}>
             <div className="column is-4" style={{padding:0,textAlign:"center"}}>
@@ -150,6 +162,9 @@ export class ViewInstance extends Component {
                 squareSize={(this.props.width*(4/12)-boardSize)*.95/boardSize}
                 selectedSquare={selectedSquare}
                 selectSquare={(square) => this.setState({ selectedSquare: square })}
+                highlightedSquare={highlightedEnt}
+                highlightSquare={this.highlightEnt}
+                unHighlightSquare={this.unHighlightEnt}
                 tabColors={tabColors}
                 localEnts={entities}
                 ghostEnts={this.props.getGhostEnts()}
@@ -167,8 +182,17 @@ export class ViewInstance extends Component {
                 handleDrop={this.handleSquareDrop}
             />
             </div>
-            <div className="column is-4" style={{backgroundColor: "black"}}>
+            <div className="column is-4" style={{backgroundColor: "white"}}>
             <Listview
+                entNames={Object.keys(entities)}
+                localEnts={entities}
+                height={this.props.height/14}
+                maxHeight={(this.props.width*(4/12)-boardSize)*.95}
+                handleClick={(square) => this.setState({ selectedSquare: square })}
+                selected={selectedSquare}
+                highlighted={highlightedEnt}
+                highlightItem={this.highlightEnt}
+                unHighlightItem={this.unHighlightEnt}
             />
             </div>
             <div className="column is-4 cardCol">

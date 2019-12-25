@@ -1,0 +1,62 @@
+.listview {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.listview .listEnt {
+    border: 2px solid rgb(39, 39, 39);
+    margin: 0;
+}
+.listview .listEnt.is-highlighted {
+    background-color: aqua;
+}
+.listview .listEnt.is-selected {
+    background-color: #eacf48;
+}
+
+.listview .listEnt:hover {
+    cursor: pointer;
+    background-color: rgb(212, 212, 212);
+}
+.listview .listEnt.is-selected:hover {
+    background-color: #d1b940;
+}
+
+.listview .entName {
+    float: left;
+    display: flex;
+    overflow: hidden;
+    border: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    flex-grow: 2;
+    flex-basis: 0;
+}
+
+.listview .entName .title {
+    margin: auto 5%;
+}
+
+.listview .entHealth {
+    display: flex;
+    flex-grow: 8;
+}
+
+.listview .entHealth .title {
+    margin: auto;
+    text-align: center;
+    color: rgb(230, 230, 230);
+}
+
+.listview .blankList {
+    height: 100%;
+    display: flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.listview .blankWrapper {
+    text-align: center;
+}

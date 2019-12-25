@@ -22,6 +22,10 @@ td.is-local-ent .cell {
     width: 100%;
     height: 100%;
 }
+td.is-highlighted .cell {
+    background-color: aqua;
+    cursor: pointer;
+}
 td.is-local-ent .cell:hover {
     background-color: rgb(122, 58, 13);
 }
